@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="jp">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="reset.css">
+    <title>所属クラブの場所はどこ？</title>
+
+
+   <style>
+    .gamen{
+    background-color: rgb(208, 247, 245);
+    width: 360px;
+    height: 573px;
+    margin: 0 auto;
+    }
+   
+
+    .header{
+        text-align: center;
+        height: 30px;
+        background-color: #202f55;
+        color: yellow;
+        line-height: 30px;
+        border-radius: 5px;
+    }
+
+    #myMap{
+        border:solid ;
+        border-color: red;
+        border-width: 2px;
+        margin: 5px auto;
+        height:250px;
+        width: 340px;
+    }
+
+    .players{
+        border:solid ;
+        border-color: red;
+        border-width: 2px;
+        margin: 5px auto;
+        height:250px;
+        width: 340px;
+        overflow-y: scroll;
+        display:flex;
+        flex-wrap: wrap;
+    }
+
+    .player{
+        /* border:solid ;
+        border-color: red;
+        border-width: 1.5px; */
+        background-color: rgb(0, 17, 255);
+        height: 150px;
+        width: 100px;
+        margin: 2px;
+        cursor:pointer;
+        border-radius: 5px;
+        transition: 0.5s ;
+    }
+
+    .player:hover{
+        opacity: 0.6 ;
+    }
+
+
+    .photo{
+        background-color: rgb(176, 176, 254);
+        height: 70px;
+        width: 95px;
+        margin: 3px auto;
+        position:relative;
+        overflow: hidden;
+        border-radius: 5px;
+    }
+
+    .number{    
+        height: 23px;
+        width: 23px;
+        background-color: red;
+        position:absolute;
+        top:0px;
+        left:0px;
+        text-align: center;
+        font-size: 15px;
+        line-height: 23px;
+        color:yellow;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+
+    .detail{
+        background-color: white;
+        height: 65px;
+        width: 90px;
+        margin: 3px auto;
+        font-size: 12px;
+        line-height: 15px;
+        padding: 2.5px;
+        border-radius: 5px;
+    }
+
+    .name{
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    h2{
+        font-size: 8px;
+        font-weight: bold;
+        color: rgb(137, 0, 0);
+    }
+
+    .footer{
+        height: 20px;
+        background-color: #202f55;
+        border-radius: 5px;
+    }
+
+
+   </style>
+
+</head>
+<body>
+
+    <div class="gamen">
+        <div class="header">サッカー日本代表</div>
+        <div id="myMap">
+
+        </div>
+
+        <div class="players">
+            <!-- <div class="player" id="kawashima">
+                <div class="photo">
+                    <img src="画像/kawashima.jpg" height="70px">
+                    <div class="number">1</div>    
+                </div>
+                <div class="detail">
+                    <h1 class="name">川島永嗣</h1>
+                    <h2>ストラスブール</h2>
+                    <h3>1983.3.20</h3>
+                    <h3>185cm</h3>
+                </div>
+            </div> -->
+
+
+        </div>
+
+        
+
+        <div class="footer">
+
+        </div>
+
+    </div>
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AkBEv23QoeEGhQu2T-9P-n0h3-UnWL-EdzV8JHsFOLGmnuJhMLXJthC3LufCTac5' async defer></script>
+    <script src="js/BmapQuery.js"></script>
+    
+    <script>
+        var allplayers = [
+
+        {
+            'id':'kawashima',
+            'photo':'画像/kawashima.jpg',
+            'name':'川島永嗣',
+            'number':'1',
+            'team':'ストラスブール',
+            'league':'リーグ・アン(フランス)',
+            'birthday':'1983.3.20',
+            'age':'',
+            'height':'185cm',
+            'ido':'48.55956776886564',
+            'keido':'7.753576739011274'
+        },
+        {
+            'id':'gonda',
+            'photo':'画像/gonda.jpg',
+            'name':'権田修一',
+            'number':'12',
+            'team':'清水エスパルス',
+            'league':'Jリーグ(日本)',
+            'birthday':'1989.3.3',
+            'age':'',
+            'height':'187cm',
+            'ido':'34.98432121090136',
+            'keido':'138.48130224785172'
+        },
+        {
+            'id':'schmidt',
+            'photo':'画像/Schmidt.jpg',
+            'name':'シュミット',
+            'number':'23',
+            'team':'シントトロイデン',
+            'league':'ベルギー・ファースト・ディヴィジョンA(ベルギー)',
+            'birthday':'1992.2.3',
+            'age':'',
+            'height':'197cm',
+            'ido':'50.81346721760314',
+            'keido':'5.1663054148883205'
+        },
+        {
+            'id':'yamane',
+            'photo':'画像/yamane.jpg',
+            'name':'山根視来',
+            'number':'2',
+            'team':'川崎フロンターレ',
+            'league':'Jリーグ(日本)',
+            'birthday':'1993.12.22',
+            'age':'',
+            'height':'178cm',
+            'ido':'35.58722739999844',
+            'keido':' 139.64839869990305'
+        },
+        {
+            'id':'taniguchi',
+            'photo':'画像/taniguchi.jpg',
+            'name':'谷口彰悟',
+            'number':'3',
+            'team':'川崎フロンターレ',
+            'league':'Jリーグ(日本)',
+            'birthday':'1991.7.15',
+            'age':'',
+            'height':'183cm',
+            'ido':'35.58722739999844',
+            'keido':' 139.64839869990305'
+        },
+        {
+            'id':'itakura',
+            'photo':'画像/itakura.jpg',
+            'name':'板倉滉',
+            'number':'4',
+            'team':'ボルシアMG',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1997.1.27',
+            'age':'',
+            'height':'186cm',
+            'ido':'51.17454921844462',
+            'keido':'6.385516504041284'
+        },
+        {
+            'id':'nagatomo',
+            'photo':'画像/nagatomo.jpg',
+            'name':'長友佑都',
+            'number':'5',
+            'team':'FC東京',
+            'league':'Jリーグ(日本)',
+            'birthday':'1986.9.12',
+            'age':'',
+            'height':'170cm',
+            'ido':'35.66405799998291',
+            'keido':'139.52716347101943'
+        },
+        {
+            'id':'tomiyasu',
+            'photo':'画像/tomiyasu.jpg',
+            'name':'冨安健洋',
+            'number':'16',
+            'team':'アーセナル',
+            'league':'プレミアリーグ(イングランド)',
+            'birthday':'1998.11.5',
+            'age':'',
+            'height':'187cm',
+            'ido':'51.55487844022942,',
+            'keido':'-0.10843241206305808'
+        },
+        {
+            'id':'sakai',
+            'photo':'画像/sakai.jpg',
+            'name':'酒井宏樹',
+            'number':'19',
+            'team':'浦和レッズ',
+            'league':'Jリーグ(日本)',
+            'birthday':'1990.4.12',
+            'age':'',
+            'height':'185cm',
+            'ido':'35.90210597553499',
+            'keido':'139.71797090720858'
+        },
+        {
+            'id':'yoshida',
+            'photo':'画像/yoshida.jpg',
+            'name':'吉田麻也',
+            'number':'22',
+            'team':'シャルケ',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1988.8.24',
+            'age':'',
+            'height':'189cm',
+            'ido':'51.55460421659871',
+            'keido':'7.0675262000000005'
+        },
+        {
+            'id':'ito_hiroki',
+            'photo':'画像/ito_hiroki.jpg',
+            'name':'伊藤洋輝',
+            'number':'26',
+            'team':'シュツットガルト',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1999.5.12',
+            'age':'',
+            'height':'186cm',
+            'ido':'48.792172883186',
+            'keido':'9.23208'
+        },
+        {
+            'id':'shibasaki',
+            'photo':'画像/shibasaki.jpg',
+            'name':'柴崎岳',
+            'number':'7',
+            'team':'レガネス',
+            'league':'ラ・リーガ2部(スペイン)',
+            'birthday':'1992.5.28',
+            'age':'',
+            'height':'175cm',
+            'ido':'40.34047571789733',
+            'keido':'-3.7605903963703144'
+        },
+        {
+            'id':'endo',
+            'photo':'画像/endo.jpg',
+            'name':'遠藤航',
+            'number':'6',
+            'team':'シュツットガルト',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1993.2.9',
+            'age':'',
+            'height':'178cm',
+            'ido':'48.792172883186',
+            'keido':'9.23208'
+        },
+        {
+            'id':'ito_junnya',
+            'photo':'画像/ito_junnya.jpg',
+            'name':'伊東純也',
+            'number':'14',
+            'team':'スタッド・ランス',
+            'league':'リーグ・アン(フランス)',
+            'birthday':'1993.3.9',
+            'age':'',
+            'height':'176cm',
+            'ido':'49.247054899998446',
+            'keido':'4.0239307177622194'
+        },
+        {
+            'id':'asano',
+            'photo':'画像/asano.jpg',
+            'name':'浅野拓磨',
+            'number':'18',
+            'team':'ボーフム',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1994.11.10',
+            'age':'',
+            'height':'173cm',
+            'ido':'51.48988359831951',
+            'keido':'7.236512999891638'
+        },
+        {
+            'id':'minamino',
+            'photo':'画像/minamino.jpg',
+            'name':'南野拓実',
+            'number':'10',
+            'team':'モナコ',
+            'league':'リーグ・アン(フランス)',
+            'birthday':'1995.1.16',
+            'age':'',
+            'height':'174cm',
+            'ido':'43.727572971076675',
+            'keido':'7.415580166470101'
+        },
+        {
+            'id':'morita',
+            'photo':'画像/morita.jpg',
+            'name':'守田英正',
+            'number':'13',
+            'team':'スポルティング',
+            'league':'プリメイラ・リーガ(ポルトガル)',
+            'birthday':'1995.5.10',
+            'age':'',
+            'height':'177cm',
+            'ido':'38.761204802180096',
+            'keido':'-9.161795600134985'
+        },
+        {
+            'id':'kamada',
+            'photo':'画像/kamada.jpg',
+            'name':'鎌田大地',
+            'number':'15',
+            'team':'Ｅフランクフルト',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1996.8.5',
+            'age':'',
+            'height':'180cm',
+            'ido':'50.06858067152175',
+            'keido':'8.645461267174895'
+        },
+        {
+            'id':'souma',
+            'photo':'画像/souma.jpg',
+            'name':'相馬勇紀',
+            'number':'24',
+            'team':'名古屋グランパス',
+            'league':'Jリーグ(日本)',
+            'birthday':'1997.2.25',
+            'age':'',
+            'height':'166cm',
+            'ido':'35.084470520533465',
+            'keido':'137.1708978422937'
+        },
+        {
+            'id':'mitoma',
+            'photo':'画像/mitoma.jpg',
+            'name':'三笘薫',
+            'number':'9',
+            'team':'ブライトン',
+            'league':'プレミアリーグ(イングランド)',
+            'birthday':'1997.5.20',
+            'age':'',
+            'height':'178cm',
+            'ido':'50.8615470811657',
+            'keido':'-0.08372319646126095'
+        },
+        {
+            'id':'maeda',
+            'photo':'画像/maeda.jpg',
+            'name':'前田大然',
+            'number':'25',
+            'team':'セルティック',
+            'league':'スコティッシュ・プレミアシップ(スコットランド)',
+            'birthday':'1997.10.20',
+            'age':'',
+            'height':'173cm',
+            'ido':'55.84969600000001',
+            'keido':'-4.20555342890641'
+        },
+        {
+            'id':'douan',
+            'photo':'画像/douan.jpg',
+            'name':'堂安律',
+            'number':'8',
+            'team':'フライブルク',
+            'league':'ブンデスリーガ(ドイツ)',
+            'birthday':'1998.6.16',
+            'age':'',
+            'height':'172cm',
+            'ido':'48.02105347181573',
+            'keido':'7.829169071100271'
+        },
+        {
+            'id':'ueda',
+            'photo':'画像/ueda.jpg',
+            'name':'上田綺世',
+            'number':'21',
+            'team':'セルクル ブルージュ',
+            'league':'ベルギー・ファースト・ディヴィジョンA(ベルギー)',
+            'birthday':'1998.8.28',
+            'age':'',
+            'height':'182cm',
+            'ido':'51.19323643813997',
+            'keido':'3.1800160999595843'
+        },
+        {
+            'id':'tanaka',
+            'photo':'画像/tanaka.jpg',
+            'name':'田中碧',
+            'number':'17',
+            'team':'デュッセルドルフ',
+            'league':'ブンデスリーガ2部(ドイツ)',
+            'birthday':'1998.9.10',
+            'age':'',
+            'height':'180cm',
+            'ido':'51.261555545037744',
+            'keido':'6.733104369319128'
+        },
+        {
+            'id':'machino',
+            'photo':'画像/machino.jpg',
+            'name':'町野修斗',
+            'number':'20',
+            'team':'湘南ベルマーレ',
+            'league':'Jリーグ(日本)',
+            'birthday':'1999.9.30',
+            'age':'',
+            'height':'185cm',
+            'ido':'35.34357284173173',
+            'keido':'139.34117367342554'
+        },
+        {
+            'id':'kubo',
+            'photo':'画像/kubo.jpg',
+            'name':'久保建英',
+            'number':'11',
+            'team':'レアル・ソシエダ',
+            'league':'ラ・リーガ(スペイン)',
+            'birthday':'2001.6.4',
+            'age':'',
+            'height':'173cm',
+            'ido':'43.30139594401793',
+            'keido':'-1.97354321780358'
+        }
+        ];
+
+    function GetMap() {
+        const map = new Microsoft.Maps.Map('#myMap', {
+            center: new Microsoft.Maps.Location(25.362993, 51.159787), //Location center position
+            mapTypeId: Microsoft.Maps.MapTypeId.canvasLight, //Type: [load, aerial,canvasDark,canvasLight,birdseye,grayscale,streetside]
+            zoom: 5  //Zoom:1=zoomOut, 20=zoomUp[ 1~20 ]
+        });
+
+
+
+    }
+
+    i=0;
+
+    for (let i =0; i<26;i++){
+
+    let h =`
+    <div class="player" id="${allplayers[i].id}">
+                <div class="photo">
+                    <img src="${allplayers[i].photo}" height="70px">
+                    <div class="number">${allplayers[i].number}</div>    
+                </div>
+                <div class="detail">
+                    <h1 class="name">${allplayers[i].name}</h1>
+                    <h2><nobr>${allplayers[i].team}</nobr></h2>
+                    <h3>${allplayers[i].birthday}</h3>
+                    <h3>${allplayers[i].height}</h3>
+                </div>
+            </div>
+    
+    `;
+    $(".players").append(h); 
+    }
+
+
+
+
+
+    for (let i =0; i<26;i++){
+    $(`#${allplayers[i].id}`).on('click', function () {
+            // alert("選手をクリックしました");
+
+            const map = new Microsoft.Maps.Map('#myMap', {
+            center: new Microsoft.Maps.Location(`${allplayers[i].ido}`,`${allplayers[i].keido}`), //Location center position
+            mapTypeId: Microsoft.Maps.MapTypeId.canvasLight, //Type: [load, aerial,canvasDark,canvasLight,birdseye,grayscale,streetside]
+            zoom: 6   //Zoom:1=zoomOut, 20=zoomUp[ 1~20 ]
+
+        });
+
+        let center = map.getCenter();
+
+        let infobox = new Microsoft.Maps.Infobox(center,{
+            title:`${allplayers[i].team}`,
+            description:`${allplayers[i].league}`
+        })
+
+        infobox.setMap(map);
+
+        let pin = new Microsoft.Maps.Pushpin({latitude:`${allplayers[i].ido}`,longitude:`${allplayers[i].keido}`},{
+            color:'red'
+        });
+
+        map.entities.push(pin);
+            
+    });
+    };
+
+
+
+    </script>
+
+
+
+
+</body>
+</html>
